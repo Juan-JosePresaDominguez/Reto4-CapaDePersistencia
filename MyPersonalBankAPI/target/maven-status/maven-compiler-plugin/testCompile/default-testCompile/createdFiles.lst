@@ -1,1 +1,3 @@
 es\netmind\mypersonalbankapi\controladores\PrestamosControllerTest.class
+es\netmind\mypersonalbankapi\controladores\ClientesControllerTest.class
+es\netmind\mypersonalbankapi\persistencia\ClientesInMemoryRepoTest.class

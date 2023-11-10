@@ -34,6 +34,10 @@ public class ClientesController {
         }
     }
 
+    public static int numeroClientes() {
+        return clientesRepo.getAll().size();
+    }
+
     public static void mostrarDetalle(Integer uid) {
         System.out.println("\nDetalle de cliente: " + uid);
         System.out.println("───────────────────────────────────");
