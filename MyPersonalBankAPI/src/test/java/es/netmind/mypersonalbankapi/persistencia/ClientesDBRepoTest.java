@@ -63,7 +63,13 @@ class ClientesDBRepoTest {
 
         System.out.println(cliente);
 
-        assertThat(cliente.getId(), greaterThan(0));
+        //assertThat(cliente.getId(), greaterThan(0));
+
+        Cliente nuevoCliente = repo.getClientById(cliente.getId());
+
+        //Comprobamos que lo que se ha insertado es lo que tenía que ser
+        assertThat(cliente.getNombre(), is("Ricardo"));
+        assertThat(cliente.getDni(), is("12345678J"));
     }
 
     @Test
@@ -79,7 +85,7 @@ class ClientesDBRepoTest {
     }
 
     @Test
-    void dadosClientes_cuandoupdateClient_entoncesClientePersonalpdate() throws Exception {
+    void dadosClientes_cuandoupdateClient_entoncesClientePersonalUpdate() throws Exception {
         //Como usuario del sistema, quiero poder modificar los datos de un cliente para mantenerlos actualizados.
         Personal cliente = new Personal(6, "Ricardo Ahumada", "ricardo@a.com", "Netmind 23 !", LocalDate.now(), true, false, "12345678J");
 
@@ -87,8 +93,15 @@ class ClientesDBRepoTest {
 
         System.out.println(cliente);
 
-        assertThat(cliente.getId(), greaterThan(0));
+        //assertThat(cliente.getId(), greaterThan(0));
+
+        Cliente nuevoCliente = repo.getClientById(cliente.getId());
+
+        //Comprobamos que lo que se ha insertado es lo que tenía que ser
+        assertThat(cliente.getNombre(), is("Ricardo Ahumada"));
+        assertThat(cliente.getDni(), is("12345678J"));
     }
+
     @Test
     void dadosClientes_cuandoupdateClient_entoncesClienteEmpresaUpdateException() throws Exception {
         //Como usuario del sistema, quiero poder modificar los datos de un cliente para mantenerlos actualizados.
@@ -98,6 +111,24 @@ class ClientesDBRepoTest {
 
         assertThrows(Exception.class, () -> {
             repo.updateClient(cliente);
+        });
+    }
+
+    @Test
+    void dadosClientes_cuandodeleteClient_entoncesClienteDelete() throws Exception {
+        //Borrar cliente por Id
+        Personal cliente = new Personal(null, "Ricardo", "ricardo@a.com", "Netmind 23", LocalDate.now(), true, false, "12345678J");
+
+        repo.addClient(cliente);
+
+        repo.deleteClient(cliente);
+
+        System.out.println(cliente);
+
+        //assertThat(cliente.getId(), greaterThan(0));
+
+        assertThrows(Exception.class, () -> {
+            repo.getClientById(cliente.getId());
         });
     }
 

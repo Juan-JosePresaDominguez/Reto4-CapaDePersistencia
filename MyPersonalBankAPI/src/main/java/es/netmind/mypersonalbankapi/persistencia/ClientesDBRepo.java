@@ -13,11 +13,24 @@ import java.util.List;
 
 public class ClientesDBRepo implements IClientesRepo {
 
+    private static ClientesDBRepo instance;
+
     private static String db_url = null;
 
     public ClientesDBRepo() throws Exception {
         PropertyValues props = new PropertyValues();
         db_url = props.getPropValues().getProperty("db_url");
+    }
+
+    public static ClientesDBRepo getInstance() {
+        if (instance == null) {
+            try {
+                instance = new ClientesDBRepo();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return instance;
     }
 
     @Override
@@ -155,7 +168,27 @@ public class ClientesDBRepo implements IClientesRepo {
 
     @Override
     public boolean deleteClient(Cliente cliente) throws Exception {
-        return false;
+        String sql = "DELETE FROM cliente WHERE id=?";
+
+        try (
+                Connection conn = DriverManager.getConnection(db_url);
+                PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            stmt.setInt(1, cliente.getId());
+
+            int rows = stmt.executeUpdate();
+            System.out.println(rows);
+
+            if (rows <= 0) {
+                throw new ClienteNotFoundException();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return true;
     }
 
     @Override

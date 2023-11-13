@@ -12,7 +12,8 @@ import java.util.List;
 
 public class ClientesController {
 
-    private static IClientesRepo clientesRepo = ClientesInMemoryRepo.getInstance();
+    //private static IClientesRepo clientesRepo = ClientesInMemoryRepo.getInstance();
+    private static IClientesRepo clientesRepo = ClientesDBRepo.getInstance();
     private static ICuentasRepo cuentasRepo = CuentasInMemoryRepo.getInstance();
     private static IPrestamosRepo prestamosRepo = PrestamosInMemoryRepo.getInstance();
 
