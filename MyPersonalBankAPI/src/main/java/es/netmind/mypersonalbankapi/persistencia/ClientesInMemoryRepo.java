@@ -61,6 +61,11 @@ public class ClientesInMemoryRepo implements IClientesRepo {
     }
 
     @Override
+    public Cliente addClientPersonal(Personal cliente) throws Exception {
+        return null;
+    }
+
+    @Override
     public boolean deleteClient(Cliente cliente) throws Exception {
         if (cliente.getId() > 0) {
             for (Cliente c : clientes) {

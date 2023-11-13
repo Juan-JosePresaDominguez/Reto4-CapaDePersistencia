@@ -112,6 +112,40 @@ public class ClientesDBRepo implements IClientesRepo {
         return null;
     }
 
+    @Override       //INSERT
+    public Cliente addClientPersonal(Personal cliente) throws Exception {
+        String sql = "INSERT INTO cliente (`dtype`, `id`, `nombre`, `email`, `direccion`, `alta`, `activo`, `moroso`, `dni`)  values (?,NULL,?,?,?,?,?,?,?)";
+
+        try (
+                Connection conn = DriverManager.getConnection(db_url);
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ) {
+            stmt.setString(1, "Personal");
+            stmt.setString(2, cliente.getNombre());
+            stmt.setString(3, cliente.getEmail());
+            stmt.setString(4, cliente.getDireccion());
+            stmt.setString(5, cliente.getAlta().toString());
+            stmt.setBoolean(6, cliente.isActivo());
+            stmt.setBoolean(7, cliente.isMoroso());
+            stmt.setString(8, cliente.getDni());
+
+            int rows = stmt.executeUpdate();
+
+            ResultSet genKeys = stmt.getGeneratedKeys();
+            if (genKeys.next()) {
+                cliente.setId(genKeys.getInt(1));
+            } else {
+                throw new SQLException("Usuario creado erróneamente!!!");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        }
+
+        return cliente;
+    }
+
     @Override
     public boolean deleteClient(Cliente cliente) throws Exception {
         return false;

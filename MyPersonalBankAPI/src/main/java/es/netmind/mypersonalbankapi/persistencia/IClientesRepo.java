@@ -1,6 +1,7 @@
 package es.netmind.mypersonalbankapi.persistencia;
 
 import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
+import es.netmind.mypersonalbankapi.modelos.clientes.Personal;
 
 import java.util.List;
 
@@ -10,6 +11,8 @@ public interface IClientesRepo {
     public Cliente getClientById(Integer id) throws Exception;
 
     public Cliente addClient(Cliente cliente) throws Exception;
+
+    public Cliente addClientPersonal(Personal cliente) throws Exception;
 
     public boolean deleteClient(Cliente cliente) throws Exception;
 

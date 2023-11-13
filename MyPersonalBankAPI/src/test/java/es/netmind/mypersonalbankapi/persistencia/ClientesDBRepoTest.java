@@ -1,10 +1,12 @@
 package es.netmind.mypersonalbankapi.persistencia;
 
 import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
+import es.netmind.mypersonalbankapi.modelos.clientes.Personal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,4 +52,17 @@ class ClientesDBRepoTest {
 
         assertThat(cliente.getId(), is(3));
     }
+
+    @Test
+    void dadosClientes_cuandoaddCliente_entoncesClientePersonalInsert() throws Exception {
+        //Como usuario del sistema, quiero poder registrar nuevos clientes para poder incrementar nuestro base de datos.
+        Personal cliente = new Personal(null, "Ricardo", "ricardo@a.com", "Netmind 23", LocalDate.now(), true, false, "12345678J");
+
+        repo.addClientPersonal(cliente);
+
+        System.out.println(cliente);
+
+        assertThat(cliente.getId(), greaterThan(0));
+    }
+
 }
