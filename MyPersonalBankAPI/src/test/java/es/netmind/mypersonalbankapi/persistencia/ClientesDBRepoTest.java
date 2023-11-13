@@ -1,6 +1,7 @@
 package es.netmind.mypersonalbankapi.persistencia;
 
 import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
+import es.netmind.mypersonalbankapi.modelos.clientes.Empresa;
 import es.netmind.mypersonalbankapi.modelos.clientes.Personal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,11 +59,46 @@ class ClientesDBRepoTest {
         //Como usuario del sistema, quiero poder registrar nuevos clientes para poder incrementar nuestro base de datos.
         Personal cliente = new Personal(null, "Ricardo", "ricardo@a.com", "Netmind 23", LocalDate.now(), true, false, "12345678J");
 
-        repo.addClientPersonal(cliente);
+        repo.addClient(cliente);
 
         System.out.println(cliente);
 
         assertThat(cliente.getId(), greaterThan(0));
+    }
+
+    @Test
+    void dadosClientes_cuandoaddCliente_entoncesClienteEmpresaInsert() throws Exception {
+        //Como usuario del sistema, quiero poder registrar nuevos clientes para poder incrementar nuestro base de datos.
+        Empresa cliente = new Empresa(null, "Caixa", "caixa@c.com", "BCN", LocalDate.now(), true, false, "J12345678", new String[]{"Activo", "Garantías"});
+
+        repo.addClient(cliente);
+
+        System.out.println(cliente);
+
+        assertThat(cliente.getId(), greaterThan(0));
+    }
+
+    @Test
+    void dadosClientes_cuandoupdateClient_entoncesClientePersonalpdate() throws Exception {
+        //Como usuario del sistema, quiero poder modificar los datos de un cliente para mantenerlos actualizados.
+        Personal cliente = new Personal(6, "Ricardo Ahumada", "ricardo@a.com", "Netmind 23 !", LocalDate.now(), true, false, "12345678J");
+
+        repo.updateClient(cliente);
+
+        System.out.println(cliente);
+
+        assertThat(cliente.getId(), greaterThan(0));
+    }
+    @Test
+    void dadosClientes_cuandoupdateClient_entoncesClienteEmpresaUpdateException() throws Exception {
+        //Como usuario del sistema, quiero poder modificar los datos de un cliente para mantenerlos actualizados.
+        Empresa cliente = new Empresa(85,"Caixa Bank", "caixa@c.com", "BCN", LocalDate.now(), true, true, "J12345678", new String[]{"Activo", "Garantías", "Tasaciones"});
+
+        System.out.println(cliente);
+
+        assertThrows(Exception.class, () -> {
+            repo.updateClient(cliente);
+        });
     }
 
 }

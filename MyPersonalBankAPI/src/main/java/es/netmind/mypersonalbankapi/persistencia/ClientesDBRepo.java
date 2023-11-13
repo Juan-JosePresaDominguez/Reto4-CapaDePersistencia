@@ -8,6 +8,7 @@ import es.netmind.mypersonalbankapi.properties.PropertyValues;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ClientesDBRepo implements IClientesRepo {
@@ -32,29 +33,29 @@ public class ClientesDBRepo implements IClientesRepo {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                    if (rs.getString("dtype").equals("Empresa")) {
-                        clientes.add(new Empresa(
-                                rs.getInt("id"),
-                                rs.getString("nombre"),
-                                rs.getString("email"),
-                                rs.getString("direccion"),
-                                rs.getDate("alta").toLocalDate(),
-                                rs.getBoolean("activo"),
-                                rs.getBoolean("moroso"),
-                                rs.getString("cif"),
-                                new String[]{rs.getString("unidades_de_negocio")}));
-                    } else {
-                            clientes.add(new Personal(
-                                    rs.getInt("id"),
-                                    rs.getString("nombre"),
-                                    rs.getString("email"),
-                                    rs.getString("direccion"),
-                                    rs.getDate("alta").toLocalDate(),
-                                    rs.getBoolean("activo"),
-                                    rs.getBoolean("moroso"),
-                                    rs.getString("dni")));
-                        }
-                    }
+                if (rs.getString("dtype").equals("Empresa")) {
+                    clientes.add(new Empresa(
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getString("email"),
+                            rs.getString("direccion"),
+                            rs.getDate("alta").toLocalDate(),
+                            rs.getBoolean("activo"),
+                            rs.getBoolean("moroso"),
+                            rs.getString("cif"),
+                            new String[]{rs.getString("unidades_de_negocio")}));
+                } else {
+                    clientes.add(new Personal(
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getString("email"),
+                            rs.getString("direccion"),
+                            rs.getDate("alta").toLocalDate(),
+                            rs.getBoolean("activo"),
+                            rs.getBoolean("moroso"),
+                            rs.getString("dni")));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,27 +108,33 @@ public class ClientesDBRepo implements IClientesRepo {
         return cliente;
     }
 
-    @Override
-    public Cliente addClient(Cliente cliente) throws Exception {
-        return null;
-    }
-
     @Override       //INSERT
-    public Cliente addClientPersonal(Personal cliente) throws Exception {
-        String sql = "INSERT INTO cliente (`dtype`, `id`, `nombre`, `email`, `direccion`, `alta`, `activo`, `moroso`, `dni`)  values (?,NULL,?,?,?,?,?,?,?)";
+    public Cliente addClient(Cliente cliente) throws Exception {
+        String sql = "INSERT INTO cliente (`dtype`, `id`, `nombre`, `email`, `direccion`, `alta`, `activo`, `moroso`, `cif`, `unidades_de_negocio`, `dni`)  values (?,NULL,?,?,?,?,?,?,?,?,?)";
 
         try (
                 Connection conn = DriverManager.getConnection(db_url);
                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ) {
-            stmt.setString(1, "Personal");
+
+            if (cliente instanceof Personal) {
+                stmt.setString(1, "Personal");
+                stmt.setString(8, null);
+                stmt.setString(9, null);
+                stmt.setString(10, ((Personal) cliente).getDni());
+            } else {
+                stmt.setString(1, "Empresa");
+                stmt.setString(8, ((Empresa) cliente).getCif());
+                stmt.setString(9, Arrays.toString(((Empresa) cliente).getUnidadesNegocio()));
+                stmt.setString(10, null);
+            }
+
             stmt.setString(2, cliente.getNombre());
             stmt.setString(3, cliente.getEmail());
             stmt.setString(4, cliente.getDireccion());
             stmt.setString(5, cliente.getAlta().toString());
             stmt.setBoolean(6, cliente.isActivo());
             stmt.setBoolean(7, cliente.isMoroso());
-            stmt.setString(8, cliente.getDni());
 
             int rows = stmt.executeUpdate();
 
@@ -153,6 +160,46 @@ public class ClientesDBRepo implements IClientesRepo {
 
     @Override
     public Cliente updateClient(Cliente cliente) throws Exception {
-        return null;
+        String sql = "UPDATE cliente SET dtype=?, nombre=?, email=?, direccion=?, alta=?, activo=?, moroso=?, cif=?, unidades_de_negocio=?, dni=? WHERE id=?";
+
+        try (
+                Connection conn = DriverManager.getConnection(db_url);
+                PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+
+            if (cliente instanceof Personal) {
+                stmt.setString(1, "Personal");
+                stmt.setString(8, null);
+                stmt.setString(9, null);
+                stmt.setString(10, ((Personal) cliente).getDni());
+            } else {
+                stmt.setString(1, "Empresa");
+                stmt.setString(8, ((Empresa) cliente).getCif());
+                stmt.setString(9, Arrays.toString(((Empresa) cliente).getUnidadesNegocio()));
+                stmt.setString(10, null);
+            }
+
+            stmt.setString(2, cliente.getNombre());
+            stmt.setString(3, cliente.getEmail());
+            stmt.setString(4, cliente.getDireccion());
+            stmt.setString(5, cliente.getAlta().toString());
+            stmt.setBoolean(6, cliente.isActivo());
+            stmt.setBoolean(7, cliente.isMoroso());
+            stmt.setInt(11, cliente.getId());
+
+            int rows = stmt.executeUpdate();
+
+            System.out.println(rows);
+
+            if(rows<=0){
+                throw new ClienteNotFoundException();     // Si queremos que devuelva excepción al no encontrar cliente
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        }
+
+        return cliente;
     }
 }
