@@ -1,5 +1,6 @@
 package es.netmind.mypersonalbankapi.persistencia;
 
+import es.netmind.mypersonalbankapi.exceptions.ClienteNotFoundException;
 import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
 import es.netmind.mypersonalbankapi.modelos.clientes.Empresa;
 import es.netmind.mypersonalbankapi.modelos.clientes.Personal;
@@ -31,7 +32,7 @@ public class ClientesDBRepo implements IClientesRepo {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                    if (rs.getString("dtype") == "Empresa") {
+                    if (rs.getString("dtype").equals("Empresa")) {
                         clientes.add(new Empresa(
                                 rs.getInt("id"),
                                 rs.getString("nombre"),
@@ -41,7 +42,7 @@ public class ClientesDBRepo implements IClientesRepo {
                                 rs.getBoolean("activo"),
                                 rs.getBoolean("moroso"),
                                 rs.getString("cif"),
-                                new String[]{rs.getString("unidadesNegocio")}));
+                                new String[]{rs.getString("unidades_de_negocio")}));
                     } else {
                             clientes.add(new Personal(
                                     rs.getInt("id"),
@@ -63,9 +64,47 @@ public class ClientesDBRepo implements IClientesRepo {
         return clientes;
     }
 
-    @Override
+    @Override       //Devuelve el cliente indicado por parámetro
     public Cliente getClientById(Integer id) throws Exception {
-        return null;
+        Cliente cliente = null;
+        String sql = "SELECT c.* FROM cliente c WHERE id=?";
+
+        try (
+                Connection conn = DriverManager.getConnection(db_url);
+                // ordenes sql
+                PreparedStatement pstm = conn.prepareStatement(sql);
+        ) {
+            pstm.setInt(1, id);
+            ResultSet rs = pstm.executeQuery();
+            if (rs.next()) {
+                if (rs.getString("dtype").equals("Empresa")) {
+                    cliente = new Empresa(
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getString("email"),
+                            rs.getString("direccion"),
+                            rs.getDate("alta").toLocalDate(),
+                            rs.getBoolean("activo"),
+                            rs.getBoolean("moroso"),
+                            rs.getString("cif"),
+                            new String[]{rs.getString("unidades_de_negocio")});
+                } else {
+                    cliente = new Personal(
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getString("email"),
+                            rs.getString("direccion"),
+                            rs.getDate("alta").toLocalDate(),
+                            rs.getBoolean("activo"),
+                            rs.getBoolean("moroso"),
+                            rs.getString("dni"));
+                }
+            } else {
+                throw new ClienteNotFoundException();
+            }
+        }
+
+        return cliente;
     }
 
     @Override
