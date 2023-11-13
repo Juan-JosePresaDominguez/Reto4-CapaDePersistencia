@@ -16,7 +16,7 @@ public class ClientesController {
     private static ICuentasRepo cuentasRepo = CuentasInMemoryRepo.getInstance();
     private static IPrestamosRepo prestamosRepo = PrestamosInMemoryRepo.getInstance();
 
-    public static void mostrarLista() {
+    public static void mostrarLista() throws Exception {
         System.out.println("\nLista de clientes:");
         System.out.println("───────────────────────────────────");
         List<Cliente> clientes = clientesRepo.getAll();
@@ -34,7 +34,7 @@ public class ClientesController {
         }
     }
 
-    public static int numeroClientes() {
+    public static int numeroClientes() throws Exception {
         return clientesRepo.getAll().size();
     }
 

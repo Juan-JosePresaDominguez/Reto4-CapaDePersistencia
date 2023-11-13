@@ -27,7 +27,7 @@ public class Main {
 
     }
 
-    private static void procesarArgumentos(String[] args) {
+    private static void procesarArgumentos(String[] args) throws Exception {
         int argsLength = args.length;
         String arg0 = args[0].toLowerCase();
         String arg1 = args[1].toLowerCase();
@@ -48,7 +48,7 @@ public class Main {
 
     }
 
-    private static void procesarArgumentosClientes(String[] args) {
+    private static void procesarArgumentosClientes(String[] args) throws Exception {
         int argsLength = args.length;
         String arg1 = args[1].toLowerCase();
 

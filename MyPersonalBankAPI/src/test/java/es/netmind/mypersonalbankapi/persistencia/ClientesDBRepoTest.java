@@ -21,7 +21,7 @@ class ClientesDBRepoTest {
     }
 
     @Test
-    void dadosClientes_cuandogetAll_entoncesClientes() {
+    void dadosClientes_cuandogetAll_entoncesClientes() throws Exception {
         List<Cliente> clientes = repo.getAll();
 
         System.out.println(clientes);

@@ -46,7 +46,12 @@ class ClientesControllerTest {
     @Order(2)
     void dadoUsuarioConsultaDetalle_cuandoClienteNoExiste_entoncesError() {
         //given
-        int long1 = ClientesController.numeroClientes();
+        int long1 = 0;
+        try {
+            long1 = ClientesController.numeroClientes();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         //when
         ClientesController.mostrarDetalle(4);
         //then
@@ -90,7 +95,7 @@ class ClientesControllerTest {
 
     @Test
     @Order(5)
-    void dadoUsuarioQuiereConsultar_cuandoHayClientes_entoncesObtieneListaClientes() {
+    void dadoUsuarioQuiereConsultar_cuandoHayClientes_entoncesObtieneListaClientes() throws Exception {
         //given
         int long1 = ClientesController.numeroClientes();
         //when
@@ -102,7 +107,7 @@ class ClientesControllerTest {
 
     @Test
     @Order(6)
-    void dadoUsuarioQuiereConsultar_cuandoNoHayClientes_entoncesObtieneListaVacia() {
+    void dadoUsuarioQuiereConsultar_cuandoNoHayClientes_entoncesObtieneListaVacia() throws Exception {
         //given
         ClientesController.eliminar(1);
         ClientesController.eliminar(2);
@@ -133,7 +138,7 @@ class ClientesControllerTest {
 
     @Test
     @Order(8)
-    void dadoUsuarioQuiereAltaCliente_cuandoDatosNOK_entoncesAltaNOK() {
+    void dadoUsuarioQuiereAltaCliente_cuandoDatosNOK_entoncesAltaNOK() throws Exception {
         String[] datos = {
                 "empresa",
                 "Servicios Informatico SL",

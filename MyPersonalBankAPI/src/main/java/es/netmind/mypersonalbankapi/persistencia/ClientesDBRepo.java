@@ -1,6 +1,8 @@
 package es.netmind.mypersonalbankapi.persistencia;
 
 import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
+import es.netmind.mypersonalbankapi.modelos.clientes.Empresa;
+import es.netmind.mypersonalbankapi.modelos.clientes.Personal;
 import es.netmind.mypersonalbankapi.properties.PropertyValues;
 
 import java.sql.*;
@@ -17,40 +19,46 @@ public class ClientesDBRepo implements IClientesRepo {
     }
 
     @Override
-    public List<Cliente> getAll() {
+    public List<Cliente> getAll() throws Exception {
         List<Cliente> clientes = new ArrayList<>();
 
-//        String sql = "SELECT * FROM cliente u WHERE 1";
-//
-//        try (
-//                Connection conn = DriverManager.getConnection(db_url);
-//                PreparedStatement stmt = conn.prepareStatement(sql);
-//        ) {
-//
-//            //stmt.setString(1, );
-//            ResultSet rs = stmt.executeQuery();
-//
-//            while (rs.next()) {
-//                clientes.add(
-//                        new Cliente(
-//                                rs.getInt("id"),
-//                                rs.getString("nombre"),
-//                                rs.getString("email"),
-//                                rs.getString("direccion"),
-//                                rs.getDate("alta").toLocalDate(),
-//                                rs.getBoolean("activo"),
-//                                rs.getBoolean("moroso"),
-//                                rs.getString("cif"),
-//                                rs.getString("unidadesNegocio"),
-//                                rs.getString("dni")
-//                        )
-//                );
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            throw new Exception(e);
-//        }
+        String sql = "SELECT * FROM cliente u WHERE 1";
+
+        try (
+                Connection conn = DriverManager.getConnection(db_url);
+                PreparedStatement stmt = conn.prepareStatement(sql);
+        ) {
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                    if (rs.getString("dtype") == "Empresa") {
+                        clientes.add(new Empresa(
+                                rs.getInt("id"),
+                                rs.getString("nombre"),
+                                rs.getString("email"),
+                                rs.getString("direccion"),
+                                rs.getDate("alta").toLocalDate(),
+                                rs.getBoolean("activo"),
+                                rs.getBoolean("moroso"),
+                                rs.getString("cif"),
+                                new String[]{rs.getString("unidadesNegocio")}));
+                    } else {
+                            clientes.add(new Personal(
+                                    rs.getInt("id"),
+                                    rs.getString("nombre"),
+                                    rs.getString("email"),
+                                    rs.getString("direccion"),
+                                    rs.getDate("alta").toLocalDate(),
+                                    rs.getBoolean("activo"),
+                                    rs.getBoolean("moroso"),
+                                    rs.getString("dni")));
+                        }
+                    }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        }
 
         return clientes;
     }

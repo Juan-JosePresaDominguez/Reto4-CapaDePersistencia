@@ -5,7 +5,7 @@ import es.netmind.mypersonalbankapi.modelos.clientes.Cliente;
 import java.util.List;
 
 public interface IClientesRepo {
-    public List<Cliente> getAll();
+    public List<Cliente> getAll() throws Exception;
 
     public Cliente getClientById(Integer id) throws Exception;
 
