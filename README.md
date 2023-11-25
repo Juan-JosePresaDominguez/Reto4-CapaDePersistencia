@@ -13,4 +13,4 @@ Tú y tu equipo deberéis:
 - Configurar el sistema de gestión de base datos.
 - Implementar la capa de persistencia de la aplicación para usar la base de datos como data source.
 - Definir tests que permitan garantizar la capa de persistencia.
-- Respositorio GitHub: CrabNebulaS/Reto2 (github.com)
+- Respositorio GitHub: Juan-JosePresaDominguez/Reto4-CapaDePersistencia (github.com)
